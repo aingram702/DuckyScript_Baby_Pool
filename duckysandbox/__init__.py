@@ -7,6 +7,7 @@ payload on a real host.
 """
 
 from .emulator import EmulationResult, detect_target_os, emulate
+from .html_report import render_html
 from .report import compute_risk_score, render_json, render_markdown, risk_rating
 
 __version__ = "0.1.0"
@@ -17,6 +18,7 @@ __all__ = [
     "detect_target_os",
     "render_markdown",
     "render_json",
+    "render_html",
     "compute_risk_score",
     "risk_rating",
     "__version__",

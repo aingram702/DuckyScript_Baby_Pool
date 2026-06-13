@@ -13,6 +13,7 @@ dependencies = []
 
 [project.scripts]
 duckysandbox = "duckysandbox.cli:main"
+duckysandbox-web = "duckysandbox.webapp:main"
 
 [tool.setuptools]
 packages = ["duckysandbox"]
