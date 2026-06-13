@@ -36,10 +36,14 @@ payload text
      │             (URLs, domains, IPs, files, registry keys), and decodes
      │             base64 `-EncodedCommand` payloads recursively
      ▼
- report.py     -- renders a Markdown or JSON report: risk score, ATT&CK
-                   tactic summary, findings table, execution timeline,
-                   process tree, network/file/registry activity, and
-                   defanged IOCs
+ report.py / html_report.py -- render the result as Markdown, JSON, or a
+                   themed standalone HTML report: risk score, ATT&CK tactic
+                   summary, findings table, execution timeline, process tree,
+                   network/file/registry activity, and defanged IOCs
+     ▼
+ cli.py / webapp.py -- `duckysandbox` CLI (--format markdown|json|html) and
+                   `duckysandbox-web`, a stdlib http.server GUI for pasting
+                   payloads and viewing the report in a browser
 ```
 
 Because runtime conditions (`IF (...) THEN`) can't be evaluated statically,
@@ -67,10 +71,43 @@ whenever one is hit:
 pip install -e .
 ```
 
-This installs the `duckysandbox` package and a `duckysandbox` console
-script. No third-party dependencies are required (stdlib only).
+This installs the `duckysandbox` package and the `duckysandbox` and
+`duckysandbox-web` console scripts. No third-party dependencies are required
+(stdlib only).
 
-## Usage
+## Web UI
+
+```bash
+duckysandbox-web
+# 🦆 DuckyScript Behaviour Sandbox is live at http://127.0.0.1:8765/  (Ctrl+C to stop)
+```
+
+Then open <http://127.0.0.1:8765/> in a browser. The page gives you:
+
+- A big text box to paste a DuckyScript / Bash Bunny payload into.
+- A **Samples** dropdown that loads ready-made example payloads (Windows
+  recon, an encoded PowerShell downloader, a Linux `/dev/tcp` reverse shell,
+  and a benign one).
+- A **Target OS** selector (or leave it on "Auto-detect").
+- **Analyze Payload**, which renders the full themed report (risk banner,
+  ATT&CK tactic summary, findings, process tree, IOCs, etc.) right on the
+  page, and **Download JSON report** for piping into other tooling.
+
+It's the same `emulate()`/analyzer pipeline as the CLI, served over
+`http.server` -- nothing is executed, and by default it only listens on
+`127.0.0.1`. Use `--host`/`--port` to change the bind address:
+
+```bash
+duckysandbox-web --host 127.0.0.1 --port 9000
+```
+
+Or without installing:
+
+```bash
+python -m duckysandbox.webapp
+```
+
+## CLI usage
 
 ```bash
 # Markdown report to stdout, auto-detect target OS
@@ -81,6 +118,9 @@ duckysandbox payloads/linux_reverse_shell.txt --os linux -o report.md
 
 # JSON report (for feeding into other tooling)
 duckysandbox payloads/powershell_dropper.txt --format json
+
+# Self-contained, styled HTML report
+duckysandbox payloads/powershell_dropper.txt --format html -o report.html
 
 # Read a payload from stdin
 cat payload.txt | duckysandbox -
@@ -98,10 +138,11 @@ python -m duckysandbox payloads/recon_only.txt
 ### Python API
 
 ```python
-from duckysandbox import emulate, render_markdown, render_json
+from duckysandbox import emulate, render_markdown, render_json, render_html
 
 result = emulate(open("payload.txt").read(), target_os="windows")
 print(render_markdown(result, payload_name="payload.txt"))
+print(render_html(result, payload_name="payload.txt"))
 ```
 
 ## Report contents
@@ -157,7 +198,8 @@ python -m unittest discover tests
 The test suite (stdlib `unittest`, no extra dependencies) covers the
 parser's control-flow structures, the analyzer's detection rules and IOC
 extraction, the emulator's loop/repeat/step caps and process-tree modelling,
-and the Markdown/JSON report rendering.
+the Markdown/JSON/HTML report rendering (including HTML-escaping of
+attacker-controlled strings), and the web UI's request handling.
 
 ## Extending the rule library
 

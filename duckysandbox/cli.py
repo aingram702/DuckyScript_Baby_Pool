@@ -7,6 +7,7 @@ import sys
 
 from . import analyzer
 from .emulator import emulate
+from .html_report import render_html
 from .report import render_json, render_markdown
 
 
@@ -28,7 +29,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Target OS to assume (default: auto-detect from the payload content)",
     )
     parser.add_argument(
-        "--format", choices=["markdown", "json"], default="markdown",
+        "--format", choices=["markdown", "json", "html"], default="markdown",
         help="Report format (default: markdown)",
     )
     parser.add_argument(
@@ -63,9 +64,13 @@ def main(argv: list[str] | None = None) -> int:
 
     result = emulate(text, target_os=args.target_os, source_name=name)
 
-    markdown_output = render_markdown(result, payload_name=name)
     json_output = render_json(result, payload_name=name)
-    output = json_output if args.format == "json" else markdown_output
+    if args.format == "json":
+        output = json_output
+    elif args.format == "html":
+        output = render_html(result, payload_name=name)
+    else:
+        output = render_markdown(result, payload_name=name)
 
     if args.out:
         with open(args.out, "w", encoding="utf-8") as fh:
